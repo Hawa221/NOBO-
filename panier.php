@@ -2,12 +2,12 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once 'bdd.php';
 
-// Initialiser le panier s'il n'existe pas
+
 if (!isset($_SESSION['panier'])) {
     $_SESSION['panier'] = [];
 }
 
-// Mise à jour des quantités
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['maj_quantite'])) {
     foreach ($_POST['quantite'] as $id_produit => $quantite) {
         $quantite = (int)$quantite;
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['maj_quantite'])) {
     exit;
 }
 
-// Suppression d'un article
+
 if (isset($_GET['supprimer'])) {
     $id_produit = (int)$_GET['supprimer'];
     unset($_SESSION['panier'][$id_produit]);
@@ -29,7 +29,14 @@ if (isset($_GET['supprimer'])) {
     exit;
 }
 
-// Calcul du total
+
+if (isset($_GET['vider'])) {
+    $_SESSION['panier'] = [];
+    header('Location: panier.php');
+    exit;
+}
+
+
 $total = 0;
 foreach ($_SESSION['panier'] as $item) {
     $total += $item['prix'] * $item['quantite'];
@@ -103,13 +110,17 @@ foreach ($_SESSION['panier'] as $item) {
       font-size: 1.4em;
       font-weight: bold;
     }
-    .btn-update {
-      background: #eee;
+    .btn-vider {
+      background: #fdecea;
+      color: #c0392b;
       border: none;
       padding: 10px 20px;
       border-radius: 6px;
       cursor: pointer;
       margin-top: 15px;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 0.95em;
     }
     .btn-checkout {
       background: #1e1e2e;
@@ -161,7 +172,9 @@ foreach ($_SESSION['panier'] as $item) {
         </div>
       <?php endforeach; ?>
 
-      <button type="submit" name="maj_quantite" class="btn-update">Mettre à jour le panier</button>
+      <a href="panier.php?vider=1"
+         onclick="return confirm('Vider tout le panier ?');"
+         class="btn-vider">Vider le panier</a>
 
       <div class="cart-summary">
         <span class="cart-total">Total : <?= number_format($total, 2, ',', ' ') ?> €</span>
