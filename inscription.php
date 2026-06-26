@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-// Si déjà connecté, rediriger
+
 if (isset($_SESSION['utilisateur'])) {
     header('Location: index.php');
     exit;
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mdp    = $_POST['mot_de_passe'] ?? '';
     $mdp2   = $_POST['mot_de_passe2'] ?? '';
 
-    // Validations
+
     if (empty($nom) || empty($prenom) || empty($email) || empty($mdp)) {
         $erreur = "Tous les champs sont obligatoires.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -29,13 +29,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($mdp !== $mdp2) {
         $erreur = "Les mots de passe ne correspondent pas.";
     } else {
-        // Vérifier si l'email existe déjà
+        // verification 
         $stmt = $pdo->prepare("SELECT id_utilisateur FROM utilisateurs WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->fetch()) {
             $erreur = "Cet email est déjà utilisé.";
         } else {
-            // Hasher le mot de passe
+            // Hashage
             $hash = password_hash($mdp, PASSWORD_BCRYPT);
             $stmt = $pdo->prepare("INSERT INTO utilisateurs (nom, prenom, email, mot_de_passe) VALUES (?, ?, ?, ?)");
             $stmt->execute([$nom, $prenom, $email, $hash]);

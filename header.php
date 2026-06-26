@@ -38,11 +38,14 @@
             🛒 <span class="badge"><?= $nb_panier > 0 ? $nb_panier : '' ?></span>
         </a>
 
-        <!-- Compte -->
+
         <?php if (isset($_SESSION['utilisateur'])): ?>
             <span class="nav-user">👤 <?= htmlspecialchars($_SESSION['utilisateur']['prenom']) ?></span>
             <?php if ($_SESSION['utilisateur']['role'] === 'admin'): ?>
                 <a href="admin/index.php" class="nav-link">Admin</a>
+            <?php endif; ?>
+            <?php if ($_SESSION['utilisateur']['role'] === 'sales'): ?>
+                <a href="statistiques_ventes.php" class="nav-link">Statistiques</a>
             <?php endif; ?>
             <a href="mes_commandes.php" class="nav-link">Mes commandes</a>
             <a href="deconnexion.php" class="nav-link nav-logout">Déconnexion</a>
